@@ -61,7 +61,7 @@ int network_connect(struct rtree_t *rtree){
  * - Retornar a mensagem de-serializada ou NULL em caso de erro.
  */
 struct _MessageT *network_send_receive(struct rtree_t * rtree, struct _MessageT *msg){
-    size_t length = message_t__get_packed_size(msg);
+    size_t length = message_t__get_packed_size((const struct _MessageT*) msg);
     uint8_t* buffer = malloc(length*sizeof(uint8_t));
 
     if(buffer == NULL)
@@ -75,7 +75,6 @@ struct _MessageT *network_send_receive(struct rtree_t * rtree, struct _MessageT 
         close(rtree->sockfd);
         return NULL;
     }
-    printf("A ESPERA\n");
     const uint8_t buf[MAX_MSG];
 
     if((nbytes = read_all(rtree->sockfd, buf, sizeof(struct _MessageT))) != sizeof(struct _MessageT)){

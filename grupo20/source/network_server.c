@@ -86,8 +86,7 @@ int network_main_loop(int listening_socket){
 struct _MessageT *network_receive(int client_socket){
     int nbytes;
     const uint8_t* buf = malloc(sizeof(uint8_t)*2423141);
-    printf("AQUI");
-    // L� string enviada pelo cliente do socket referente a conex�o
+    // Lê string enviada pelo cliente do socket referente a conex�o
     if((nbytes = read_all(client_socket,buf,MAX_MSG)) <= 0){
         perror("Erro ao receber dados do cliente");
         close(client_socket);

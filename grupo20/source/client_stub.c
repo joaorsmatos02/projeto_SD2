@@ -55,20 +55,24 @@ int rtree_disconnect(struct rtree_t *rtree){
  * Devolve 0 (ok, em adição/substituição) ou -1 (problemas).
  */
 int rtree_put(struct rtree_t *rtree, struct entry_t *entry){
-    struct _MessageT* messageSend = (struct _MessageT*) malloc(sizeof(struct _MessageT));
-    message_t__init(messageSend);
+    struct _MessageT messageSend;// = (struct _MessageT*) malloc(sizeof(struct _MessageT));
+    message_t__init(&messageSend);
 
-    EntryT entry_copy;
+    struct _EntryT entry_copy;
+    entry_t__init(&entry_copy);
+
+    struct _DataT data_copy;
+    data_t__init(&data_copy);
+
     entry_copy.key = entry->key;
-    DataT data_copy;
     data_copy.data = entry->value->data;
     data_copy.datasize = entry->value->datasize;
     entry_copy.value = &data_copy;
-    messageSend->opcode = MESSAGE_T__OPCODE__OP_PUT;
-    messageSend->c_type = MESSAGE_T__C_TYPE__CT_ENTRY;
-    messageSend->entry = &entry_copy;
+    messageSend.opcode = MESSAGE_T__OPCODE__OP_PUT;
+    messageSend.c_type = MESSAGE_T__C_TYPE__CT_ENTRY;
+    messageSend.entry = &entry_copy;
     
-    struct _MessageT* messageReceive = network_send_receive(rtree, messageSend);
+    struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_PUT+1)
         return 0;

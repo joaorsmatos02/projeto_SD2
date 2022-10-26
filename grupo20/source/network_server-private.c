@@ -10,9 +10,7 @@ int read_all(int sock, const uint8_t* buf, int len) {
     void* buffer = (void*) buf;
 
     while(len > 0) {
-        printf("ola\n");
         int res = read(sock, buffer, len);
-        printf("ola\n");
         if(res <= 0) {
             if(errno==EINTR)
                 continue;

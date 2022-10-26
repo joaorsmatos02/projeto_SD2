@@ -3,5 +3,19 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "name": "gdb data",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/aluno-di/Documentos/GitHub/Projeto_SD2/grupo20/binary/tree_client",
+            "args": ["127.0.0.1:1025"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "preLaunchTask": "build"
+        }
+    ]
 }
