@@ -71,7 +71,11 @@ int network_main_loop(int listening_socket){
 
                 if(network_send(listening_socket, msg) == -1)
                     return -1;
+
+                message_t__free_unpacked(msg, NULL);
+
             }
+ 
         }
     }
 
@@ -85,7 +89,8 @@ int network_main_loop(int listening_socket){
  */
 struct _MessageT *network_receive(int client_socket){ ///////////////////////////////////////////////////////////
     int nbytes = 0;
-    const uint8_t* buf = malloc(sizeof(uint8_t)*MAX_MSG);
+    uint8_t buf[sizeof(uint8_t)*MAX_MSG];
+    memset(buf, 0, sizeof(uint8_t)*MAX_MSG);
     // Lê string enviada pelo cliente do socket referente a conexão
     if((nbytes = read_all(client_socket,buf,MAX_MSG)) <= 0){
         perror("Erro ao receber dados do cliente");
@@ -98,7 +103,6 @@ struct _MessageT *network_receive(int client_socket){ //////////////////////////
         return NULL;
     message_t__init(message);
     message = message_t__unpack(NULL, nbytes, buf);
-    message_t__free_unpacked(message, NULL);
 
     return message;
 }
@@ -109,7 +113,6 @@ struct _MessageT *network_receive(int client_socket){ //////////////////////////
  * - Enviar a mensagem serializada, através do client_socket.
  */
 int network_send(int client_socket, struct _MessageT *msg){
-    message_t__init(msg);
     size_t length = message_t__get_packed_size(msg);
     uint8_t* buffer = malloc(length);
 

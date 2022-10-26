@@ -74,10 +74,16 @@ int rtree_put(struct rtree_t *rtree, struct entry_t *entry){
     
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
-    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_PUT+1)
+    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_PUT+1) {
+        message_t__free_unpacked(messageReceive, NULL);
         return 0;
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    }
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return -1;
+    }
+
+    message_t__free_unpacked(messageReceive, NULL);
 
     return -1;
 }
@@ -98,10 +104,15 @@ struct data_t *rtree_get(struct rtree_t *rtree, char *key){
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_GET+1) {
         struct data_t* data = data_create(messageReceive->data->datasize);
         data->data = messageReceive->data->data;
+        message_t__free_unpacked(messageReceive, NULL);
         return data;
     }
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return NULL;
+    }
+
+    message_t__free_unpacked(messageReceive, NULL);
 
     return NULL;
 }
@@ -120,10 +131,16 @@ int rtree_del(struct rtree_t *rtree, char *key){
 
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
-    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_DEL+1)
+    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_DEL+1) {
+        message_t__free_unpacked(messageReceive, NULL);
         return 0;
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    }
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return -1;
+    }
+
+    message_t__free_unpacked(messageReceive, NULL);
 
     return -1;
 }
@@ -139,10 +156,16 @@ int rtree_size(struct rtree_t *rtree){
 
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
-    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_SIZE+1)
+    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_SIZE+1) {
+        message_t__free_unpacked(messageReceive, NULL);
         return messageReceive->size_height;
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    }
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return -1;
+    }
+
+    message_t__free_unpacked(messageReceive, NULL);
 
     return -1;
 }
@@ -158,10 +181,16 @@ int rtree_height(struct rtree_t *rtree){
 
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
-    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_HEIGHT+1)
+    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_HEIGHT+1) {
+        message_t__free_unpacked(messageReceive, NULL);
         return messageReceive->size_height;
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    }  
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return -1;
+    }
+
+    message_t__free_unpacked(messageReceive, NULL);
 
     return -1;
 }
@@ -178,10 +207,16 @@ char **rtree_get_keys(struct rtree_t *rtree){
 
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
-    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_GETKEYS+1)
+    if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_GETKEYS+1) {
+        message_t__free_unpacked(messageReceive, NULL);
         return messageReceive->keys;
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    }
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return NULL;
+    }
+
+    message_t__free_unpacked(messageReceive, NULL);
 
     return NULL;
 }
@@ -203,11 +238,14 @@ void **rtree_get_values(struct rtree_t *rtree){
 
         for(int i = 0; i < messageReceive->n_values; i++)
             memcpy(result[i], messageReceive->values[i].data, messageReceive->values->len);
-        
+
+        message_t__free_unpacked(messageReceive, NULL);
         return result;
     }
-    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR)
+    else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
+        message_t__free_unpacked(messageReceive, NULL);
         return NULL;
-
+    }
+    message_t__free_unpacked(messageReceive, NULL);
     return NULL;
 }

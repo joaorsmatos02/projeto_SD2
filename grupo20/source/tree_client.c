@@ -20,10 +20,10 @@ int main(int argc, char* argv[]) {
 
     printf("Insira o seu pedido: ");
 
-    char** inputTokens = (char**) malloc(sizeof(char*) * 10);
+    char** inputTokens = (char**) malloc(sizeof(char*) * 10); ///////////////////////////////////////7
     int tokenQuantity = 0;
 
-    do {
+    while(1) {
         // ler do stdin
         fgets(bufferStdio, 256, stdin);
         char* tokenBuffer = strtok(bufferStdio, " ");
@@ -34,14 +34,17 @@ int main(int argc, char* argv[]) {
             tokenBuffer = strtok(NULL, " ");
         }
 
+        if(strcmp(inputTokens[0], "quit\n") == 0 && tokenQuantity == 1)
+            break;
+
         //process the input
         inputHandler(inputTokens, tokenQuantity, remoteTree);
 
-        inputTokens = NULL;
         tokenQuantity = 0;
+    }
 
-      // tem de ser mesmo "quit" e nao "quit blablabla"
-    } while(strcmp(inputTokens[0], "quit") != 0 && tokenQuantity != 1);  
+    free(inputTokens);
+    free(bufferStdio);
 
     return rtree_disconnect(remoteTree);
 }
@@ -111,7 +114,7 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
     }
 
     if (result == 0)
-        printf("Operação bem sucedida!");
+        printf("Operação bem sucedida!\n");
     else
         printf("Erro na operação...\n\nInsira um pedido válido: ");
 }

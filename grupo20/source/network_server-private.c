@@ -7,7 +7,7 @@
 #include <sys/ioctl.h>
 
 int read_all(int sock, const uint8_t* buf, int len) {
-    int bufsize;
+    int bufsize = 0;
     void* buffer = (void*) buf;
 
     while(len > 0) {
@@ -22,8 +22,6 @@ int read_all(int sock, const uint8_t* buf, int len) {
         }
         buffer += res;
     }
-
-    // buf = (const uint8_t*) buffer;
 
     return bufsize;
 }

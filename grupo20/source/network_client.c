@@ -77,14 +77,17 @@ struct _MessageT *network_send_receive(struct rtree_t * rtree, struct _MessageT 
     }
     const uint8_t buf[MAX_MSG];
 
-    if((nbytes = read_all(rtree->sockfd, buf, sizeof(struct _MessageT))) != sizeof(struct _MessageT)){
+    if((nbytes = read_all(rtree->sockfd, buf, MAX_MSG)) <= 0){
         perror("Erro ao receber dados do servidor");
         close(rtree->sockfd);
         return NULL;
     }
 
-    struct _MessageT* answer = message_t__unpack(NULL, MAX_MSG, buf);
-    message_t__free_unpacked(answer, NULL);
+    struct _MessageT* answer = (struct _MessageT*) malloc(sizeof(struct _MessageT));
+    if(answer == NULL)
+        return NULL;
+    message_t__init(answer);
+    answer = message_t__unpack(NULL, nbytes, buf);
 
     return answer;
 }
