@@ -4,13 +4,16 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 
 int read_all(int sock, const uint8_t* buf, int len) {
-    int bufsize = len;
+    int bufsize;
     void* buffer = (void*) buf;
 
     while(len > 0) {
         int res = read(sock, buffer, len);
+        bufsize += res;
+        ioctl(sock, FIONREAD, &len);
         if(res <= 0) {
             if(errno==EINTR)
                 continue;
@@ -18,10 +21,9 @@ int read_all(int sock, const uint8_t* buf, int len) {
             return res;
         }
         buffer += res;
-        len -= res;
     }
 
-    buf = (const uint8_t*) buffer;
+    // buf = (const uint8_t*) buffer;
 
     return bufsize;
 }

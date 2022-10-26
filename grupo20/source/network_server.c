@@ -83,18 +83,21 @@ int network_main_loop(int listening_socket){
  * - De-serializar estes bytes e construir a mensagem com o pedido,
  *   reservando a memória necessária para a estrutura _MessageT.
  */
-struct _MessageT *network_receive(int client_socket){
-    int nbytes;
-    const uint8_t* buf = (const uint8_t*) malloc(sizeof(uint8_t)*24); //////////////////////////////////
+struct _MessageT *network_receive(int client_socket){ ///////////////////////////////////////////////////////////
+    int nbytes = 0;
+    const uint8_t* buf = malloc(sizeof(uint8_t)*MAX_MSG);
     // Lê string enviada pelo cliente do socket referente a conexão
-    if(buf == NULL || (nbytes = read_all(client_socket,buf,MAX_MSG)) <= 0){
+    if((nbytes = read_all(client_socket,buf,MAX_MSG)) <= 0){
         perror("Erro ao receber dados do cliente");
         close(client_socket);
         return NULL;
     }
 
     struct _MessageT* message = (struct _MessageT*) malloc(sizeof(struct _MessageT));
-    message = message_t__unpack(NULL, MAX_MSG, buf);
+    if(message == NULL)
+        return NULL;
+    message_t__init(message);
+    message = message_t__unpack(NULL, nbytes, buf);
     message_t__free_unpacked(message, NULL);
 
     return message;
