@@ -87,6 +87,7 @@ int rtree_put(struct rtree_t *rtree, struct entry_t *entry){
  */
 struct data_t *rtree_get(struct rtree_t *rtree, char *key){
     struct _MessageT messageSend;
+    message_t__init(&messageSend);
 
     messageSend.opcode = MESSAGE_T__OPCODE__OP_GET;
     messageSend.c_type = MESSAGE_T__C_TYPE__CT_KEY;
@@ -111,6 +112,7 @@ struct data_t *rtree_get(struct rtree_t *rtree, char *key){
  */
 int rtree_del(struct rtree_t *rtree, char *key){
     struct _MessageT messageSend;
+    message_t__init(&messageSend);
 
     messageSend.opcode = MESSAGE_T__OPCODE__OP_DEL;
     messageSend.c_type = MESSAGE_T__C_TYPE__CT_KEY;
@@ -130,6 +132,7 @@ int rtree_del(struct rtree_t *rtree, char *key){
  */
 int rtree_size(struct rtree_t *rtree){
     struct _MessageT messageSend;
+    message_t__init(&messageSend);
 
     messageSend.opcode = MESSAGE_T__OPCODE__OP_SIZE;
     messageSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
@@ -148,6 +151,7 @@ int rtree_size(struct rtree_t *rtree){
  */
 int rtree_height(struct rtree_t *rtree){
     struct _MessageT messageSend;
+    message_t__init(&messageSend);
 
     messageSend.opcode = MESSAGE_T__OPCODE__OP_HEIGHT;
     messageSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
@@ -167,6 +171,7 @@ int rtree_height(struct rtree_t *rtree){
  */
 char **rtree_get_keys(struct rtree_t *rtree){
     struct _MessageT messageSend;
+    message_t__init(&messageSend);
 
     messageSend.opcode = MESSAGE_T__OPCODE__OP_GETKEYS;
     messageSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
@@ -186,6 +191,7 @@ char **rtree_get_keys(struct rtree_t *rtree){
  */
 void **rtree_get_values(struct rtree_t *rtree){
     struct _MessageT messageSend;
+    message_t__init(&messageSend);
 
     messageSend.opcode = MESSAGE_T__OPCODE__OP_GETVALUES;
     messageSend.c_type = MESSAGE_T__C_TYPE__CT_NONE;
