@@ -73,7 +73,6 @@ int network_main_loop(int listening_socket){
                     return -1;
 
                 message_t__free_unpacked(msg, NULL);
-
             }
  
         }
@@ -87,7 +86,7 @@ int network_main_loop(int listening_socket){
  * - De-serializar estes bytes e construir a mensagem com o pedido,
  *   reservando a memória necessária para a estrutura _MessageT.
  */
-struct _MessageT *network_receive(int client_socket){ ///////////////////////////////////////////////////////////
+struct _MessageT *network_receive(int client_socket){
     int nbytes = 0;
     uint8_t buf[sizeof(uint8_t)*MAX_MSG];
     memset(buf, 0, sizeof(uint8_t)*MAX_MSG);

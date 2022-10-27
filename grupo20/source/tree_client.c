@@ -20,13 +20,15 @@ int main(int argc, char* argv[]) {
 
     printf("Insira o seu pedido: ");
 
-    char** inputTokens = (char**) malloc(sizeof(char*) * 10); ///////////////////////////////////////7
+    char** inputTokens = (char**) malloc(sizeof(char*) * 256); // 256 tamanho maximo de imput
     int tokenQuantity = 0;
 
     while(1) {
         // ler do stdin
         fgets(bufferStdio, 256, stdin);
+        bufferStdio[strcspn(bufferStdio, "\n")] = 0;
         char* tokenBuffer = strtok(bufferStdio, " ");
+        
 
         // extrair os tokens o array inputTokens
         for(;tokenBuffer != NULL; tokenQuantity++) {
@@ -34,7 +36,7 @@ int main(int argc, char* argv[]) {
             tokenBuffer = strtok(NULL, " ");
         }
 
-        if(strcmp(inputTokens[0], "quit\n") == 0 && tokenQuantity == 1)
+        if(strcmp(inputTokens[0], "quit") == 0 && tokenQuantity == 1)
             break;
 
         //process the input
@@ -70,7 +72,7 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
 
             if(data != NULL) {
                 result = 0;
-                printf("Answer: %s\n", (char *) data->data); //ASSUMINDO QUE É UMA STRING
+                printf("Answer: %s\n", (char *) data->data); //assumindo que e string
             }
         }
     }

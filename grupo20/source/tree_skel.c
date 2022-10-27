@@ -52,17 +52,23 @@ int invoke(struct _MessageT *msg){
         case MESSAGE_T__OPCODE__OP_GET: struct data_t* new_data1 = tree_get(tree, msg->key);
                                         if(new_data1 == NULL)
                                             break;
+                                        
+                                        struct _DataT* new_data2 = (struct _DataT*) malloc(sizeof(struct _DataT));
+                                        if(new_data2 == NULL)
+                                            return -1;
+                                        data_t__init(new_data2);
 
-                                        msg->data->data = new_data1->data;
-                                        msg->data->datasize = new_data1->datasize;
+                                        new_data2->data = new_data1->data;
+                                        new_data2->datasize = new_data1->datasize;
+                                        msg->data = new_data2;
                                         result = 0;
                                         break;
         case MESSAGE_T__OPCODE__OP_PUT: char* key = msg->entry->key;
                                         void* data = msg->entry->value->data;
                                         int datasize = msg->entry->value->datasize;
 
-                                        struct data_t* new_data2 = data_create2(datasize, data);
-                                        result = tree_put(tree, key, new_data2);
+                                        struct data_t* new_data3 = data_create2(datasize, data);
+                                        result = tree_put(tree, key, new_data3);
                                         
                                         break;
         case MESSAGE_T__OPCODE__OP_GETKEYS: msg->keys = tree_get_keys(tree);
