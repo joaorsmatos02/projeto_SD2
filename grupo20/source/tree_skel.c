@@ -71,7 +71,18 @@ int invoke(struct _MessageT *msg){
                                         result = tree_put(tree, key, new_data3);
                                         
                                         break;
-        case MESSAGE_T__OPCODE__OP_GETKEYS: msg->keys = tree_get_keys(tree);
+        case MESSAGE_T__OPCODE__OP_GETKEYS: int size = tree_size(tree);
+                                            char** keys = tree_get_keys(tree);
+
+                                            struct ProtobufCBinaryData* buf_keys = (struct ProtobufCBinaryData*) malloc(size * sizeof(struct ProtobufCBinaryData));
+
+                                            for(int i = 0; i < size; i++) {
+                                                buf_keys[i].data = (uint8_t*) keys[i];
+                                                buf_keys[i].len = strlen(keys[i]);         
+                                            }
+
+                                            msg->keys = buf_keys;
+                                            
                                             result = 0;
                                             break;
         case MESSAGE_T__OPCODE__OP_GETVALUES:   void** values = tree_get_values(tree);

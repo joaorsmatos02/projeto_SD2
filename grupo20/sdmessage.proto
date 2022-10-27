@@ -28,7 +28,7 @@ message message_t
         entry_t entry = 3;
         data_t data = 4;
         int32 size_height = 5;
-        repeated string keys = 6;
+        repeated bytes keys = 6;
         repeated bytes values = 7;
         string key = 8;
 };

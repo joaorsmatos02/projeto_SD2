@@ -208,8 +208,15 @@ char **rtree_get_keys(struct rtree_t *rtree){
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_GETKEYS+1) {
+
+        char** keys = malloc(messageReceive->n_keys);
+
+        for(int i = 0; i < messageReceive->n_keys; i++)
+            memcpy(keys[i], messageReceive->keys[i].data, messageReceive->keys[i].len);       
+
         message_t__free_unpacked(messageReceive, NULL);
-        return messageReceive->keys;
+
+        return keys;
     }
     else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
         message_t__free_unpacked(messageReceive, NULL);

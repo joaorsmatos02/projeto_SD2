@@ -57,7 +57,7 @@ struct  _MessageT
   DataT *data;
   int32_t size_height;
   size_t n_keys;
-  char **keys;
+  ProtobufCBinaryData *keys;
   size_t n_values;
   ProtobufCBinaryData *values;
   char *key;
