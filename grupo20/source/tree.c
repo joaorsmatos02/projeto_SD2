@@ -127,7 +127,7 @@ int tree_del(struct tree_t *tree, char *key) {
     else { // tree e o no a apagar
         if ((tree->left == NULL || tree->left->entry == NULL || tree->left->entry->key == NULL) && 
         (tree->right == NULL || tree->right->entry == NULL || tree->right->entry->key == NULL)) { // se for terminal
-            tree_destroy(tree);
+            entry_destroy(tree->entry);
             tree->entry = NULL;
             return 0;
         } else {
@@ -193,7 +193,7 @@ int tree_height(struct tree_t *tree) {
  * árvore, colocando o último elemento do array com o valor NULL e
  * reservando toda a memória necessária. As keys devem vir ordenadas segundo a ordenação lexicográfica das mesmas.
  */
-char **tree_get_keys(struct tree_t *tree) { //NOT SURE PROBABLY WRONG
+char **tree_get_keys(struct tree_t *tree) {
     if(tree == NULL || tree->entry == NULL)
         return NULL;
 
@@ -210,6 +210,8 @@ char **tree_get_keys(struct tree_t *tree) { //NOT SURE PROBABLY WRONG
 /* Itera recursivamente sobre tree, copiando as keys para arr
 */
 void tree_iterator_keys(char** arr, struct tree_t *tree, int* pos) {
+    if(tree == NULL || tree->entry == NULL || tree->entry->key == NULL)
+        return;
     if(tree->left != NULL)
         tree_iterator_keys(arr, tree->left, pos);
     arr[*pos] = malloc(strlen(tree->entry->key) + 1);
@@ -240,6 +242,8 @@ void **tree_get_values(struct tree_t *tree) {
 /* Itera recursivamente sobre tree, copiando os values para arr
 */
 void tree_iterator_values(void** arr, struct tree_t *tree, int* pos) {
+    if(tree == NULL || tree->entry == NULL || tree->entry->key == NULL)
+        return;
     if(tree->left != NULL)
         tree_iterator_values(arr, tree->left, pos);
     arr[*pos] = malloc(tree->entry->value->datasize);
