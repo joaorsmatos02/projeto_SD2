@@ -1,5 +1,13 @@
-#include <arpa/inet.h>
+// Grupo 20
+// Tomás Barreto nº 56282
+// João Matos nº 56292
+// Diogo Pereira nº 56302
 
-int read_all(int sock, const uint8_t* buf, int len);
+#ifndef _NETWORK_SERVER_PRIVATE
+#define _NETWORK_SERVER_PRIVATE
 
-int write_all(int sock, const uint8_t* buf, int len);
+/* Handler do SIGINT
+*/
+void ctrlC();
+
+#endif

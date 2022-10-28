@@ -1,3 +1,8 @@
+// Grupo 20
+// Tomás Barreto nº 56282
+// João Matos nº 56292
+// Diogo Pereira nº 56302
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -5,8 +10,11 @@
 #include "../include/tree_client.h"
 #include "../include/entry.h"
 #include "../include/data.h"
+#include <signal.h>
 
 int main(int argc, char* argv[]) {
+
+    signal(SIGPIPE, SIG_IGN);
 
     //estabelecer conexao com servidor
     struct rtree_t* remoteTree = rtree_connect(argv[1]);
@@ -14,13 +22,13 @@ int main(int argc, char* argv[]) {
     if(remoteTree == NULL)
         exit(-1);
 
-    char* bufferStdio = (char*) malloc(sizeof(char)*256);
+    char* bufferStdio = malloc(256);
 
     printMenu();
 
     printf("Insira o seu pedido: ");
 
-    char** inputTokens = (char**) malloc(sizeof(char*) * 256); // 256 tamanho maximo de imput
+    char** inputTokens = malloc(sizeof(char*) * 3); 
     int tokenQuantity = 0;
 
     while(1) {
@@ -58,12 +66,13 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
     if(strcmp(inputTokens[0], "put") == 0) {
         
         if(tokenQuantity == 3) {
-            struct data_t* value = data_create(strlen(inputTokens[2]));
+            struct data_t* value = data_create(strlen(inputTokens[2]) + 1);
             memcpy(value->data, inputTokens[2], value->datasize);
 
             struct entry_t* entry = entry_create(strdup(inputTokens[1]), value);
             
             result = rtree_put(rtree, entry);
+            entry_destroy(entry);
         }
     }
     else if(strcmp(inputTokens[0], "get") == 0) {
@@ -74,6 +83,8 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
                 result = 0;
                 printf("Answer: %s\n", (char *) data->data); //assumindo que e string
             }
+
+            data_destroy(data);
         }
     }
     else if(strcmp(inputTokens[0], "del") == 0) {
@@ -100,8 +111,12 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
             result = 0;
 
             printf("Answer: \n");
-            for(int i = 0; keys[i] != NULL; i++)
-                printf("%s ", keys[i]);
+            for(int i = 0; keys[i] != NULL; i++) {
+                printf("%s\n", keys[i]);
+                free(keys[i]);
+            }
+
+            free(keys);
         }
     }
     else if(strcmp(inputTokens[0], "getvalues") == 0) {
@@ -110,8 +125,12 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
             result = 0;
 
             printf("Answer: \n");
-            for(int i = 0; values[i] != NULL; i++)
-                printf("%s ", values[i]);
+            for(int i = 0; values[i] != NULL; i++) {
+                printf("%s\n", values[i]);
+                free(values[i]);
+            }
+
+            free(values);
         }
     }
 
@@ -119,6 +138,8 @@ void inputHandler(char** inputTokens, int tokenQuantity, struct rtree_t* rtree) 
         printf("Operação bem sucedida!\n");
     else
         printf("Erro na operação...\n\nInsira um pedido válido: ");
+
+    return;
 }
 
 void printMenu() {
@@ -131,4 +152,6 @@ void printMenu() {
     printf("getkeys             - Devolve todas as chaves(keys) das entradas da árvore\n\n");
     printf("getvalues           - Devolve todos os valores(values) de todas as entradas da árvore\n\n");
     printf("quit                - Termina o programa\n");
+
+    return;
 }

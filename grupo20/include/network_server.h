@@ -37,4 +37,6 @@ int network_send(int client_socket, struct _MessageT *msg);
  */
 int network_server_close();
 
+void ctrlC();
+
 #endif

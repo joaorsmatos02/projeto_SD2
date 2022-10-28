@@ -1,6 +1,11 @@
+// Grupo 20
+// Tomás Barreto nº 56282
+// João Matos nº 56292
+// Diogo Pereira nº 56302
+
 #include "../include/network_client.h"
 #include "../include/client_stub-private.h"
-#include "../include/network_client-private.h"
+#include "../include/read_write-private.h"
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
@@ -75,6 +80,8 @@ struct _MessageT *network_send_receive(struct rtree_t * rtree, struct _MessageT 
         close(rtree->sockfd);
         return NULL;
     }
+    free(buffer);
+
     const uint8_t buf[MAX_MSG];
 
     if((nbytes = read_all(rtree->sockfd, buf, MAX_MSG)) <= 0){
@@ -83,13 +90,9 @@ struct _MessageT *network_send_receive(struct rtree_t * rtree, struct _MessageT 
         return NULL;
     }
 
-    struct _MessageT* answer = (struct _MessageT*) malloc(sizeof(struct _MessageT));
-    if(answer == NULL)
-        return NULL;
-    message_t__init(answer);
-    answer = message_t__unpack(NULL, nbytes, buf);
+    msg = message_t__unpack(NULL, nbytes, buf);
 
-    return answer;
+    return msg;
 }
 
 /* A função network_close() fecha a ligação estabelecida por

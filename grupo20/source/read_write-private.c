@@ -1,5 +1,10 @@
+// Grupo 20
+// Tomás Barreto nº 56282
+// João Matos nº 56292
+// Diogo Pereira nº 56302
+
 #include <errno.h>
-#include "../include/network_server-private.h"
+#include "../include/read_write-private.h"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -17,7 +22,6 @@ int read_all(int sock, const uint8_t* buf, int len) {
         if(res <= 0) {
             if(errno==EINTR)
                 continue;
-            perror("read failed");
             return res;
         }
         buffer += res;

@@ -1,3 +1,8 @@
+// Grupo 20
+// Tomás Barreto nº 56282
+// João Matos nº 56292
+// Diogo Pereira nº 56302
+
 #include "../include/client_stub.h"
 #include "../include/client_stub-private.h"
 #include "../include/data.h"
@@ -18,15 +23,15 @@
  * Retorna NULL em caso de erro.
  */
 struct rtree_t *rtree_connect(const char *address_port){
-    struct rtree_t* connection = (struct rtree_t*) malloc(sizeof(struct rtree_t));
+    struct rtree_t* connection = malloc(sizeof(struct rtree_t));
     
     if(connection == NULL)
         return NULL;
 
-    char* ipPortBuffer = strtok(strdup(address_port), ":");
+    char* ipPortBuffer = strtok((char*) address_port, ":");
     char** ipPortTokens = (char**) malloc(sizeof(char*) * 2);
     int tokenQuantity = 0;
-
+    
     // extrair os tokens o array inputTokens
     for(;ipPortBuffer != NULL; tokenQuantity++) {
         ipPortTokens[tokenQuantity] = ipPortBuffer;
@@ -36,8 +41,13 @@ struct rtree_t *rtree_connect(const char *address_port){
     connection->ip_addr = ipPortTokens[0];
     connection->port = ipPortTokens[1];
 
+    free(ipPortTokens);
+    free(ipPortBuffer);
+
     if(network_connect(connection) == 0)
         return connection;
+        
+    free(connection);
 
     return NULL;
 }
@@ -47,7 +57,9 @@ struct rtree_t *rtree_connect(const char *address_port){
  * Retorna 0 se tudo correr bem e -1 em caso de erro.
  */
 int rtree_disconnect(struct rtree_t *rtree){
-    return network_close(rtree);
+    int result = network_close(rtree);
+    free(rtree);
+    return result;
 }
 
 /* Função para adicionar um elemento na árvore.
@@ -157,8 +169,9 @@ int rtree_size(struct rtree_t *rtree){
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_SIZE+1) {
+        int size = messageReceive->size_height;
         message_t__free_unpacked(messageReceive, NULL);
-        return messageReceive->size_height;
+        return size;
     }
     else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
         message_t__free_unpacked(messageReceive, NULL);
@@ -182,8 +195,9 @@ int rtree_height(struct rtree_t *rtree){
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_HEIGHT+1) {
+        int height = messageReceive->size_height;
         message_t__free_unpacked(messageReceive, NULL);
-        return messageReceive->size_height;
+        return height;
     }  
     else if (messageReceive->opcode == MESSAGE_T__OPCODE__OP_ERROR) {
         message_t__free_unpacked(messageReceive, NULL);
@@ -209,10 +223,14 @@ char **rtree_get_keys(struct rtree_t *rtree){
 
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_GETKEYS+1) {
 
-        char** keys = malloc(messageReceive->n_keys);
+        char** keys = malloc(sizeof(char*) * (messageReceive->n_keys + 1));
 
-        for(int i = 0; i < messageReceive->n_keys; i++)
-            memcpy(keys[i], messageReceive->keys[i].data, messageReceive->keys[i].len);       
+        for(int i = 0; i < messageReceive->n_keys; i++) {
+            keys[i] = calloc(messageReceive->keys[i].len + 1, sizeof(char));
+            memcpy(keys[i], messageReceive->keys[i].data, messageReceive->keys[i].len);
+        }      
+
+        keys[messageReceive->n_keys] = NULL;
 
         message_t__free_unpacked(messageReceive, NULL);
 
@@ -241,10 +259,13 @@ void **rtree_get_values(struct rtree_t *rtree){
     struct _MessageT* messageReceive = network_send_receive(rtree, &messageSend);
 
     if(messageReceive->opcode == MESSAGE_T__OPCODE__OP_GETVALUES+1) {
-        void** result = malloc(messageReceive->n_values * sizeof(void*));
+        void** result = malloc((messageReceive->n_values + 1) * sizeof(void*));
 
-        for(int i = 0; i < messageReceive->n_values; i++)
-            memcpy(result[i], messageReceive->values[i].data, messageReceive->values->len);
+        for(int i = 0; i < messageReceive->n_values; i++) {
+            result[i] = malloc(messageReceive->values[i].len);
+            memcpy(result[i], messageReceive->values[i].data, messageReceive->values[i].len);
+        }
+        result[messageReceive->n_values] = NULL;
 
         message_t__free_unpacked(messageReceive, NULL);
         return result;
@@ -254,5 +275,6 @@ void **rtree_get_values(struct rtree_t *rtree){
         return NULL;
     }
     message_t__free_unpacked(messageReceive, NULL);
+
     return NULL;
 }

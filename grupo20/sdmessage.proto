@@ -1,3 +1,8 @@
+// Grupo 20
+// Tomás Barreto nº 56282
+// João Matos nº 56292
+// Diogo Pereira nº 56302
+
 syntax = "proto3";
 message message_t
  {

@@ -8,6 +8,7 @@
 #include "../include/tree-private.h"
 #include "../include/entry.h"
 #include <string.h>
+#include <stdio.h>
 
 /* Função para criar uma nova árvore tree vazia.
  * Em caso de erro retorna NULL.
@@ -25,13 +26,16 @@ struct tree_t *tree_create() {
 /* Função para libertar toda a memória ocupada por uma árvore.
  */
 void tree_destroy(struct tree_t *tree) {
-    if(tree == NULL)
+    
+    if(tree->entry == NULL) {
+        free(tree);
         return;
-    if(tree->right != NULL && tree->right->entry != NULL && tree->right->entry->key != NULL) {
+    }
+    if(tree->right != NULL) {
         tree_destroy(tree->right);
         tree->right = NULL;
     }
-    if(tree->left != NULL && tree->left->entry != NULL && tree->left->entry->key != NULL) {
+    if(tree->left != NULL) {
         tree_destroy(tree->left);
         tree->left = NULL;
     }
@@ -41,6 +45,8 @@ void tree_destroy(struct tree_t *tree) {
     }
     free(tree);
     tree = NULL;
+
+    return;
 }
 
 /* Função para adicionar um par chave-valor à árvore.
@@ -132,7 +138,7 @@ int tree_del(struct tree_t *tree, char *key) {
             return 0;
         } else {
             entry_destroy(tree->entry);
-            if (tree->left == NULL) { // se nao tiver a esquerda
+            if (tree->left == NULL || tree->left->entry == NULL || tree->left->entry->key == NULL) { // se nao tiver a esquerda
                 // ir buscar no mais pequeno a direita para substituir
                 struct tree_t* temp = smallest_key(tree->right);
                 tree->entry = entry_dup(temp->entry); // copiar conteudo do no
@@ -246,7 +252,7 @@ void tree_iterator_values(void** arr, struct tree_t *tree, int* pos) {
         return;
     if(tree->left != NULL)
         tree_iterator_values(arr, tree->left, pos);
-    arr[*pos] = malloc(tree->entry->value->datasize);
+    arr[*pos] = malloc(sizeof(struct data_t));
     memcpy(arr[*pos], tree->entry->value, sizeof(struct data_t));
     (*pos)++;
     if(tree->right != NULL)
